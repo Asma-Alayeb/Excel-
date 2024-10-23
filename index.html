@@ -35,6 +35,10 @@
             outline: none;
             background-color: #e9ecef;
         }
+
+        .formula {
+            background-color: #d1ecf1;
+        }
     </style>
 </head>
 <body>
@@ -59,10 +63,35 @@
                     });
                     cell.addEventListener('blur', () => {
                         cell.style.backgroundColor = '';
+                        calculateFormula(cell);
                     });
                     row.appendChild(cell);
                 }
                 spreadsheet.appendChild(row);
+            }
+        }
+
+        function calculateFormula(cell) {
+            const formula = cell.innerText.trim();
+            if (formula.startsWith('=')) {
+                const result = evaluateFormula(formula.slice(1));
+                cell.innerText = result;
+                cell.classList.add('formula');
+            } else {
+                cell.classList.remove('formula');
+            }
+        }
+
+        function evaluateFormula(formula) {
+            try {
+                // Replace cell references (e.g., A1) with their values
+                return Function('"use strict";return (' + formula.replace(/([A-Z]+)(\d+)/g, (match) => {
+                    const col = match.charCodeAt(0) - 65; // Convert A=0, B=1, etc.
+                    const row = parseInt(match.slice(1), 10) - 1; // Convert to zero-based index
+                    return document.querySelector(`#spreadsheet tr:nth-child(${row + 1}) td:nth-child(${col + 1})`).innerText || 0;
+                }) + ')')();
+            } catch (e) {
+                return 'ERROR';
             }
         }
 
