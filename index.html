@@ -3,15 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Embed Excel Sheet</title>
+    <title>Statistics Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #results {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Embedded Excel Sheet</h1>
-    <iframe 
-        src=https://cccs-my.sharepoint.com/:x:/r/personal/asma_alayeb_ccd_edu/Documents/Book%206.xlsx?d=w401e150a738a421d890302687708021f&csf=1&web=1&e=jTMkMs
-        width="100%" 
-        height="500px" 
-        frameborder="0">
-    </iframe>
+    <div class="container">
+        <h1>Statistics Calculator</h1>
+
+        <!-- One Variable Statistics -->
+        <div class="section">
+            <h2>One Variable Statistics</h2>
+            <label for="data">Enter numbers (comma-separated):</label>
+            <input type="text" id="data" placeholder="e.g., 1, 2, 3, 4, 5">
+            <button onclick="computeStats()">Compute Statistics</button>
+        </div>
+
+        <!-- Binomial Distribution -->
+        <div class="section">
+            <h2>Binomial Distribution</h2>
+            <label for="n">Number of Trials (n):</label>
+            <input type="number" id="n" placeholder="e.g., 10">
+            <label for="p">Probability of Success (p):</label>
+            <input type="number" step="0.01" id="p" placeholder="e.g., 0.5">
+            <label for="k">Number of Successes (k):</label>
+            <input type="number" id="k" placeholder="e.g., 5">
+            <button onclick="computeBinomial()">Compute Binomial Probability</button>
+        </div>
+
+        <!-- Normal Distribution -->
+        <div class="section">
+            <h2>Normal Distribution</h2>
+            <label for="mean">Mean (μ):</label>
+            <input type="number" id="mean" placeholder="e.g., 0">
+            <label for="stddev">Standard Deviation (σ):</label>
+            <input type="number" id="stddev" placeholder="e.g., 1">
+            <label for="x">Value (x):</label>
+            <input type="number" id="x" placeholder="e.g., 1">
+            <button onclick="computeNormal()">Compute Normal Probability</button>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        function computeStats() {
+            const data = document.getElementById('data').value.split(',').map(Number);
+            const n = data.length;
+            const mean = data.reduce((a, b) => a + b) / n;
+            const variance = data.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / n;
+            const stddev = Math.sqrt(variance);
+            
+            const results = `
+                <h3>One Variable Statistics</h3>
+                <p>Mean: ${mean.toFixed(2)}</p>
+                <p>Variance: ${variance.toFixed(2)}</p>
+                <p>Standard Deviation: ${stddev.toFixed(2)}</p>
+            `;
+            document.getElementById('results').innerHTML = results;
+        }
+
+        function computeBinomial() {
+            const n = parseInt(document.getElementById('n').value);
+            const p = parseFloat(document.getElementById('p').value);
+            const k = parseInt(document.getElementById('k').value);
+            const binomialCoefficient = factorial(n) / (factorial(k) * factorial(n - k));
+            const probability = binomialCoefficient * Math.pow(p, k) * Math.pow(1 - p, n - k);
+            const results = `
+                <h3>Binomial Distribution</h3>
+                <p>Probability of ${k} successes in ${n} trials: ${probability.toFixed(4)}</p>
+            `;
+            document.getElementById('results').innerHTML += results;
+        }
+
+        function computeNormal() {
+            const mean = parseFloat(document.getElementById('mean').value);
+            const stddev = parseFloat(document.getElementById('stddev').value);
+            const x = parseFloat(document.getElementById('x').value);
+            const z = (x - mean) / stddev;
+            const probability = 0.5 * (1 + erf(z / Math.sqrt(2))); // CDF for standard normal distribution
+            const results = `
+                <h3>Normal Distribution</h3>
+                <p>Probability of x = ${x}: ${probability.toFixed(4)}</p>
+            `;
+            document.getElementById('results').innerHTML += results;
+        }
+
+        function factorial(num) {
+            if (num === 0) return 1;
+            return num * factorial(num - 1);
+        }
+
+        function erf(x) {
+            // Error function approximation
+            const sign = (x >= 0) ? 1 : -1;
+            x = Math.abs(x);
+            const a = 8 * (Math.PI - 3) / (3 * Math.PI * Math.PI);
+            const t = 1 / (1 + a * x);
+            const y = 1 - t * Math.exp(-x * x - 1.26551223 + t * (1.00002368 + t * (0.37409196 + t * (0.09678418 + t * (-0.18628806 + t * (0.27886807 + t * (-1.13520398 + t * (1.48851587 + t * (-0.82215223 + t * 0.17087277)))))))));
+            return sign * y;
+        }
+    </script>
 </body>
 </html>
