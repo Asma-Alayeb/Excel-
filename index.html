@@ -3,100 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Spreadsheet</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            width: 100%;
-            overflow: auto;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: center;
-            width: 100px;
-            height: 30px;
-            cursor: text;
-        }
-
-        td:focus {
-            outline: none;
-            background-color: #e9ecef;
-        }
-
-        .formula {
-            background-color: #d1ecf1;
-        }
-    </style>
+    <title>Embed Excel Sheet</title>
 </head>
 <body>
-    <div class="container">
-        <table id="spreadsheet">
-            <tbody>
-                <!-- Rows will be generated here -->
-            </tbody>
-        </table>
-    </div>
-    <script>
-        const spreadsheet = document.getElementById('spreadsheet');
-
-        function createSpreadsheet(rows, cols) {
-            for (let i = 0; i < rows; i++) {
-                const row = document.createElement('tr');
-                for (let j = 0; j < cols; j++) {
-                    const cell = document.createElement('td');
-                    cell.contentEditable = true;
-                    cell.addEventListener('focus', () => {
-                        cell.style.backgroundColor = '#e9ecef';
-                    });
-                    cell.addEventListener('blur', () => {
-                        cell.style.backgroundColor = '';
-                        calculateFormula(cell);
-                    });
-                    row.appendChild(cell);
-                }
-                spreadsheet.appendChild(row);
-            }
-        }
-
-        function calculateFormula(cell) {
-            const formula = cell.innerText.trim();
-            if (formula.startsWith('=')) {
-                const result = evaluateFormula(formula.slice(1));
-                cell.innerText = result;
-                cell.classList.add('formula');
-            } else {
-                cell.classList.remove('formula');
-            }
-        }
-
-        function evaluateFormula(formula) {
-            try {
-                // Replace cell references (e.g., A1) with their values
-                return Function('"use strict";return (' + formula.replace(/([A-Z]+)(\d+)/g, (match) => {
-                    const col = match.charCodeAt(0) - 65; // Convert A=0, B=1, etc.
-                    const row = parseInt(match.slice(1), 10) - 1; // Convert to zero-based index
-                    return document.querySelector(`#spreadsheet tr:nth-child(${row + 1}) td:nth-child(${col + 1})`).innerText || 0;
-                }) + ')')();
-            } catch (e) {
-                return 'ERROR';
-            }
-        }
-
-        // Create a 10x10 spreadsheet
-        createSpreadsheet(10, 10);
-    </script>
+    <h1>Embedded Excel Sheet</h1>
+    <iframe 
+        src=https://cccs-my.sharepoint.com/:x:/r/personal/asma_alayeb_ccd_edu/Documents/Book%206.xlsx?d=w401e150a738a421d890302687708021f&csf=1&web=1&e=jTMkMs
+        width="100%" 
+        height="500px" 
+        frameborder="0">
+    </iframe>
 </body>
 </html>
