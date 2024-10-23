@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Spreadsheet</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            overflow: auto;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            width: 100px;
+            height: 30px;
+            cursor: text;
+        }
+
+        td:focus {
+            outline: none;
+            background-color: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <table id="spreadsheet">
+            <tbody>
+                <!-- Rows will be generated here -->
+            </tbody>
+        </table>
+    </div>
+    <script>
+        const spreadsheet = document.getElementById('spreadsheet');
+
+        function createSpreadsheet(rows, cols) {
+            for (let i = 0; i < rows; i++) {
+                const row = document.createElement('tr');
+                for (let j = 0; j < cols; j++) {
+                    const cell = document.createElement('td');
+                    cell.contentEditable = true;
+                    cell.addEventListener('focus', () => {
+                        cell.style.backgroundColor = '#e9ecef';
+                    });
+                    cell.addEventListener('blur', () => {
+                        cell.style.backgroundColor = '';
+                    });
+                    row.appendChild(cell);
+                }
+                spreadsheet.appendChild(row);
+            }
+        }
+
+        // Create a 10x10 spreadsheet
+        createSpreadsheet(10, 10);
+    </script>
+</body>
+</html>
